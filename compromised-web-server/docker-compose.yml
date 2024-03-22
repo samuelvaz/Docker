@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  web:
+    image: vulnerables/web-dvwa  # Damn Vulnerable Web Application: Not for production!
+    ports:
+      - "80:80"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwapass
+      - MYSQL_DATABASE=dvwa
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.6  # Intentionally using an older version for educational purposes
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwapass
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
