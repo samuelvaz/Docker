@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+ web:
+    image: php:7.4-apache
+    container_name: php_web
+    volumes:
+      - ./www:/var/www/html # Mounts the local 'www' directory to the container's document root
+    ports:
+      - "8080:80" # Maps port 8080 on the host to port 80 on the container
+    networks:
+      - lamp-network # Connects the 'web' service to the 'lamp-network'
+ db:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: lamp_db
+      MYSQL_USER: lamp_user
+      MYSQL_PASSWORD: userpassword
+    volumes:
+      - ./mysql:/var/lib/mysql # Mounts the local 'mysql' directory to the container's MySQL data directory
+    networks:
+      - lamp-network # Connects the 'db' service to the 'lamp-network'
+ admin:
+    image: phpmyadmin/phpmyadmin
+    container_name: php_admin
+    environment:
+      PMA_HOST: db # Configures phpMyAdmin to connect to the 'db' service
+    ports:
+      - "8081:80" # Maps port 8081 on the host to port 80 on the container
+    depends_on:
+      - db # Ensures the 'db' service starts before the 'admin' service
+    networks:
+      - lamp-network # Connects the 'admin' service to the 'lamp-network'
+networks:
+ lamp-network:
+    driver: bridge # Defines a custom network for the services to communicate
